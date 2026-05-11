@@ -16,7 +16,7 @@ const COLUMNS = [
   { id: "DONE", title: "Done", color: "bg-gray-100 text-gray-700 border-gray-200" },
 ]
 
-export function KanbanBoard({ initialTasks, workspaceId }: { initialTasks: any[], workspaceId: string }) {
+export function KanbanBoard({ initialTasks }: { initialTasks: any[] }) {
   const [tasks, setTasks] = useState(initialTasks)
   const [isPending, startTransition] = useTransition()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -121,7 +121,6 @@ export function KanbanBoard({ initialTasks, workspaceId }: { initialTasks: any[]
       <TaskModal 
         isOpen={isModalOpen} 
         onClose={() => { setIsModalOpen(false); setEditingTask(null); }}
-        workspaceId={workspaceId}
         initialStatus={activeColumn}
         task={editingTask}
       />

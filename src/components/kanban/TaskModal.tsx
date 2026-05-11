@@ -12,13 +12,11 @@ import { createTask, updateTask } from "@/app/actions/tasks"
 export function TaskModal({ 
   isOpen, 
   onClose, 
-  workspaceId, 
   initialStatus = "TODO",
   task = null 
 }: { 
   isOpen: boolean, 
   onClose: () => void, 
-  workspaceId: string,
   initialStatus?: string,
   task?: any 
 }) {
@@ -51,8 +49,7 @@ export function TaskModal({
           title,
           description,
           status: initialStatus,
-          priority,
-          workspaceId
+          priority
         })
       }
       onClose()
