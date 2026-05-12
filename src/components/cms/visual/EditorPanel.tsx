@@ -108,7 +108,7 @@ function TestimonialsPanel({ testimonials, setTestimonials }: { testimonials: an
   const [newForm, setNewForm] = useState({ name: "", role: "", content: "", image: "" })
 
   const handleCreate = () => startTransition(async () => {
-    const t = await createTestimonial({ name: newForm.name, role: newForm.role || undefined, content: newForm.content, image: newForm.image || undefined })
+    const t = await createTestimonial({ name: newForm.name, role: newForm.role, content: newForm.content, image: newForm.image || undefined })
     setTestimonials([...testimonials, t])
     setAdding(false)
     setNewForm({ name: "", role: "", content: "", image: "" })

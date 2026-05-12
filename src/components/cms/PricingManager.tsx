@@ -17,12 +17,12 @@ export function PricingManager({ plans: initial }: { plans: any[] }) {
   const parseFeatures = (raw: string) => raw.split("\n").map(f => f.trim()).filter(Boolean)
 
   const handleCreate = () => startTransition(async () => {
-    await createPricingPlan({ name: form.name, price: parseFloat(form.price) || 0, interval: form.interval, features: parseFeatures(form.featuresRaw), highlighted: form.highlighted })
+    await createPricingPlan({ name: form.name, price: form.price, interval: form.interval, features: parseFeatures(form.featuresRaw), isPopular: form.highlighted })
     reset()
   })
 
   const handleUpdate = (id: string) => startTransition(async () => {
-    await updatePricingPlan(id, { name: form.name, price: parseFloat(form.price) || 0, interval: form.interval, features: parseFeatures(form.featuresRaw), highlighted: form.highlighted })
+    await updatePricingPlan(id, { name: form.name, price: form.price, interval: form.interval, features: parseFeatures(form.featuresRaw), isPopular: form.highlighted })
     reset()
   })
 
@@ -33,7 +33,7 @@ export function PricingManager({ plans: initial }: { plans: any[] }) {
 
   const startEdit = (p: any) => {
     setEditingId(p.id)
-    setForm({ name: p.name, price: String(p.price), interval: p.interval, featuresRaw: p.features.join("\n"), highlighted: p.highlighted })
+    setForm({ name: p.name, price: String(p.price), interval: p.interval, featuresRaw: p.features.join("\n"), highlighted: !!p.isPopular })
     setShowNew(false)
   }
 
@@ -68,7 +68,7 @@ export function PricingManager({ plans: initial }: { plans: any[] }) {
           </div>
         )}
         {initial.map(plan => (
-          <div key={plan.id} className={`bg-white/80 backdrop-blur-xl border shadow-glass rounded-2xl p-6 group ${plan.highlighted ? "border-violet-300 ring-2 ring-violet-200" : "border-white/60"}`}>
+          <div key={plan.id} className={`bg-white/80 backdrop-blur-xl border shadow-glass rounded-2xl p-6 group ${plan.isPopular ? "border-violet-300 ring-2 ring-violet-200" : "border-white/60"}`}>
             {editingId === plan.id ? (
               <div className="space-y-4">
                 <PlanForm form={form} setForm={setForm} />
@@ -81,7 +81,7 @@ export function PricingManager({ plans: initial }: { plans: any[] }) {
               <div>
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    {plan.highlighted && <span className="inline-flex items-center gap-1 bg-violet-100 text-violet-700 text-xs font-medium px-2 py-0.5 rounded-full mb-2"><Star size={10} /> Popular</span>}
+                    {plan.isPopular && <span className="inline-flex items-center gap-1 bg-violet-100 text-violet-700 text-xs font-medium px-2 py-0.5 rounded-full mb-2"><Star size={10} /> Popular</span>}
                     <p className="font-bold text-dark text-lg">{plan.name}</p>
                     <p className="text-3xl font-bold text-dark mt-1">${plan.price}<span className="text-sm font-normal text-gray-400">/{plan.interval}</span></p>
                   </div>

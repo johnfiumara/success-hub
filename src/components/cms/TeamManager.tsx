@@ -11,17 +11,17 @@ export function TeamManager({ members: initial }: { members: any[] }) {
   const [isPending, startTransition] = useTransition()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showNew, setShowNew] = useState(false)
-  const [form, setForm] = useState({ name: "", role: "", bio: "", avatarUrl: "" })
+  const [form, setForm] = useState({ name: "", role: "", bio: "", image: "" })
 
-  const reset = () => { setForm({ name: "", role: "", bio: "", avatarUrl: "" }); setShowNew(false); setEditingId(null) }
+  const reset = () => { setForm({ name: "", role: "", bio: "", image: "" }); setShowNew(false); setEditingId(null) }
 
   const handleCreate = () => startTransition(async () => {
-    await createTeamMember({ name: form.name, role: form.role, bio: form.bio || undefined, avatarUrl: form.avatarUrl || undefined })
+    await createTeamMember({ name: form.name, role: form.role, bio: form.bio || undefined, image: form.image || undefined })
     reset()
   })
 
   const handleUpdate = (id: string) => startTransition(async () => {
-    await updateTeamMember(id, { name: form.name, role: form.role, bio: form.bio || undefined, avatarUrl: form.avatarUrl || undefined })
+    await updateTeamMember(id, { name: form.name, role: form.role, bio: form.bio || undefined, image: form.image || undefined })
     reset()
   })
 
@@ -31,7 +31,7 @@ export function TeamManager({ members: initial }: { members: any[] }) {
   }
 
   const startEdit = (m: any) => {
-    setEditingId(m.id); setForm({ name: m.name, role: m.role, bio: m.bio ?? "", avatarUrl: m.avatarUrl ?? "" }); setShowNew(false)
+    setEditingId(m.id); setForm({ name: m.name, role: m.role, bio: m.bio ?? "", image: m.image ?? "" }); setShowNew(false)
   }
 
   return (
@@ -77,8 +77,8 @@ export function TeamManager({ members: initial }: { members: any[] }) {
             ) : (
               <div>
                 <div className="flex items-start justify-between mb-3">
-                  {m.avatarUrl
-                    ? <img src={m.avatarUrl} alt={m.name} className="w-14 h-14 rounded-full object-cover" />
+                  {m.image
+                    ? <img src={m.image} alt={m.name} className="w-14 h-14 rounded-full object-cover" />
                     : <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">{m.name[0]}</div>
                   }
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -104,7 +104,7 @@ function MemberForm({ form, setForm }: { form: any; setForm: any }) {
       <div className="space-y-2"><Label>Name *</Label><Input value={form.name} onChange={e => setForm((p: any) => ({ ...p, name: e.target.value }))} placeholder="Jane Doe" /></div>
       <div className="space-y-2"><Label>Role *</Label><Input value={form.role} onChange={e => setForm((p: any) => ({ ...p, role: e.target.value }))} placeholder="Product Designer" /></div>
       <div className="col-span-2 space-y-2"><Label>Bio</Label><textarea value={form.bio} onChange={e => setForm((p: any) => ({ ...p, bio: e.target.value }))} rows={2} placeholder="Short bio…" className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring" /></div>
-      <div className="col-span-2 space-y-2"><Label>Avatar URL</Label><Input value={form.avatarUrl} onChange={e => setForm((p: any) => ({ ...p, avatarUrl: e.target.value }))} placeholder="https://…" /></div>
+      <div className="col-span-2 space-y-2"><Label>Image URL</Label><Input value={form.image} onChange={e => setForm((p: any) => ({ ...p, image: e.target.value }))} placeholder="https://…" /></div>
     </div>
   )
 }

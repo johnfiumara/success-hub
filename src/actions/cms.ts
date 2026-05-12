@@ -67,14 +67,14 @@ export async function getTestimonials() {
   return prisma.testimonial.findMany({ orderBy: { createdAt: "asc" } })
 }
 
-export async function createTestimonial(data: { name: string; role: string; company?: string; content: string; image?: string; rating?: number }) {
+export async function createTestimonial(data: { name: string; role: string; company?: string; content: string; image?: string; rating?: number; published?: boolean }) {
   await requireOwner()
   const t = await prisma.testimonial.create({ data })
   revalidatePath("/cms/testimonials")
   return t
 }
 
-export async function updateTestimonial(id: string, data: { name?: string; role?: string; company?: string; content?: string; image?: string; rating?: number }) {
+export async function updateTestimonial(id: string, data: { name?: string; role?: string; company?: string; content?: string; image?: string; rating?: number; published?: boolean }) {
   await requireOwner()
   const t = await prisma.testimonial.update({ where: { id }, data })
   revalidatePath("/cms/testimonials")

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Home, CheckSquare, Settings, LogOut, Flame, Apple, Moon, Video, Users, LayoutDashboard } from "lucide-react"
+import { Home, CheckSquare, Settings, LogOut, Flame, Apple, Moon, Video, Users, LayoutDashboard, Heart } from "lucide-react"
 import { getCurrentUser, logout } from "@/actions/auth"
 import prisma from "@/lib/prisma"
 
@@ -33,8 +33,10 @@ export async function Sidebar() {
       <nav className="flex-1 px-4 py-4 space-y-1">
         <NavItem href="/" exact icon={<Home size={18} />}>Overview</NavItem>
         <NavItem href="/nutrition" icon={<Apple size={18} />}>Nutrition</NavItem>
+        <NavItem href="/workout" icon={<Flame size={18} />}>Workouts</NavItem>
         <NavItem href="/tasks" icon={<CheckSquare size={18} />}>Tasks & Habits</NavItem>
         <NavItem href="/sleep" icon={<Moon size={18} />}>Sleep</NavItem>
+        <NavItem href="/wellness" icon={<Heart size={18} />}>Wellness</NavItem>
         <NavItem href="/community" icon={<Users size={18} />}>Community</NavItem>
         <NavItem href="/meetings" icon={<Video size={18} />}>Meetings</NavItem>
         <NavItem href="/settings" icon={<Settings size={18} />}>Settings</NavItem>

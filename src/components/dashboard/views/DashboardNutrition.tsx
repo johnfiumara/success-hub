@@ -1,23 +1,40 @@
-// @ts-nocheck
+"use client"
+
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
-import { Apple, ArrowLeft, Flame, Moon, CalendarDays, Users, ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Apple, ArrowLeft } from 'lucide-react'
+import { NutritionDashboard } from '@/components/nutrition/Tracker'
+import { getDailyNutrition, getUserSettings } from '@/actions/nutrition'
 
 export default function DashboardNutrition() {
-  const navigate = useNavigate()
+  const router = useRouter()
+  const [logs, setLogs] = useState<any[]>([])
+  const [settings, setSettings] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const links = [
-    { label: 'Workout Planner', to: '/dashboard/workout', icon: Flame, color: 'coral' },
-    { label: 'Sleep Tracker', to: '/dashboard/sleep', icon: Moon, color: 'lavender' },
-    { label: 'Nutrition', to: '/dashboard/nutrition', icon: Apple, color: 'sage' },
-    { label: 'Schedule', to: '/dashboard/schedule', icon: CalendarDays, color: 'gold' },
-    { label: 'Community', to: '/dashboard/community', icon: Users, color: 'sky' },
-  ]
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [nutritionData, userSettings] = await Promise.all([
+          getDailyNutrition(new Date()),
+          getUserSettings()
+        ])
+        setLogs(nutritionData)
+        setSettings(userSettings)
+      } catch (error) {
+        console.error('Failed to fetch nutrition data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
       <div className="flex items-center gap-4">
-        <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors">
+        <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors">
           <ArrowLeft size={18} />
         </button>
         <div className="flex items-center gap-3">
@@ -29,26 +46,14 @@ export default function DashboardNutrition() {
       </div>
       <p className="body text-gray -mt-4 ml-14">Track meals and nutrition goals</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
-          <h2 className="heading-4 text-dark mb-4">Coming Soon</h2>
-          <p className="text-body text-gray">This section is being built. Check back soon for the full Nutrition Tracker experience.</p>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sage"></div>
         </div>
-        <div className="rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
-          <h3 className="heading-4 text-dark mb-4">Quick Links</h3>
-          <div className="space-y-2">
-            {links.map(link => (
-              <button key={link.to} onClick={() => navigate(link.to)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-sage/5 transition-colors text-left">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${link.color}/15`}>
-                  <link.icon size={16} className={`text-${link.color}`} />
-                </div>
-                <span className="text-sm text-dark flex-1">{link.label}</span>
-                <ChevronRight size={14} className="text-gray" />
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      ) : (
+        <NutritionDashboard logs={logs} settings={settings} />
+      )}
     </motion.div>
   )
 }
+

@@ -11,17 +11,17 @@ export function TestimonialsManager({ testimonials: initial }: { testimonials: a
   const [isPending, startTransition] = useTransition()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showNew, setShowNew] = useState(false)
-  const [form, setForm] = useState({ author: "", role: "", quote: "", avatarUrl: "" })
+  const [form, setForm] = useState({ name: "", role: "", content: "", image: "" })
 
-  const reset = () => { setForm({ author: "", role: "", quote: "", avatarUrl: "" }); setShowNew(false); setEditingId(null) }
+  const reset = () => { setForm({ name: "", role: "", content: "", image: "" }); setShowNew(false); setEditingId(null) }
 
   const handleCreate = () => startTransition(async () => {
-    await createTestimonial({ author: form.author, role: form.role || undefined, quote: form.quote, avatarUrl: form.avatarUrl || undefined })
+    await createTestimonial({ name: form.name, role: form.role, content: form.content, image: form.image || undefined })
     reset()
   })
 
   const handleUpdate = (id: string) => startTransition(async () => {
-    await updateTestimonial(id, { author: form.author, role: form.role || undefined, quote: form.quote, avatarUrl: form.avatarUrl || undefined })
+    await updateTestimonial(id, { name: form.name, role: form.role, content: form.content, image: form.image || undefined })
     reset()
   })
 
@@ -32,7 +32,7 @@ export function TestimonialsManager({ testimonials: initial }: { testimonials: a
 
   const startEdit = (t: any) => {
     setEditingId(t.id)
-    setForm({ author: t.author, role: t.role ?? "", quote: t.quote, avatarUrl: t.avatarUrl ?? "" })
+    setForm({ name: t.name, role: t.role ?? "", content: t.content, image: t.image ?? "" })
     setShowNew(false)
   }
 
@@ -53,7 +53,7 @@ export function TestimonialsManager({ testimonials: initial }: { testimonials: a
           <p className="font-semibold text-dark">New Testimonial</p>
           <TestimonialForm form={form} setForm={setForm} />
           <div className="flex gap-2 pt-2">
-            <Button onClick={handleCreate} disabled={isPending || !form.author || !form.quote} className="bg-violet-600 hover:bg-violet-700 text-white gap-2"><Check size={16} /> Save</Button>
+            <Button onClick={handleCreate} disabled={isPending || !form.name || !form.content} className="bg-violet-600 hover:bg-violet-700 text-white gap-2"><Check size={16} /> Save</Button>
             <Button variant="outline" onClick={reset}>Cancel</Button>
           </div>
         </div>
@@ -78,11 +78,11 @@ export function TestimonialsManager({ testimonials: initial }: { testimonials: a
               </div>
             ) : (
               <div className="flex items-start gap-4">
-                {t.avatarUrl && <img src={t.avatarUrl} alt={t.author} className="w-12 h-12 rounded-full object-cover shrink-0" />}
-                {!t.avatarUrl && <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-bold text-lg shrink-0">{t.author[0]}</div>}
+                {t.image && <img src={t.image} alt={t.name} className="w-12 h-12 rounded-full object-cover shrink-0" />}
+                {!t.image && <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-bold text-lg shrink-0">{t.name[0]}</div>}
                 <div className="flex-1">
-                  <p className="text-gray-700 italic">"{t.quote}"</p>
-                  <p className="font-semibold text-dark mt-2">{t.author}</p>
+                  <p className="text-gray-700 italic">"{t.content}"</p>
+                  <p className="font-semibold text-dark mt-2">{t.name}</p>
                   {t.role && <p className="text-sm text-gray-500">{t.role}</p>}
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -101,10 +101,10 @@ export function TestimonialsManager({ testimonials: initial }: { testimonials: a
 function TestimonialForm({ form, setForm }: { form: any; setForm: any }) {
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className="space-y-2"><Label>Author *</Label><Input value={form.author} onChange={e => setForm((p: any) => ({ ...p, author: e.target.value }))} placeholder="Jane Doe" /></div>
+      <div className="space-y-2"><Label>Author *</Label><Input value={form.name} onChange={e => setForm((p: any) => ({ ...p, name: e.target.value }))} placeholder="Jane Doe" /></div>
       <div className="space-y-2"><Label>Role</Label><Input value={form.role} onChange={e => setForm((p: any) => ({ ...p, role: e.target.value }))} placeholder="CEO, Acme Inc." /></div>
-      <div className="col-span-2 space-y-2"><Label>Quote *</Label><textarea value={form.quote} onChange={e => setForm((p: any) => ({ ...p, quote: e.target.value }))} rows={3} placeholder="Their testimonial…" className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring" /></div>
-      <div className="col-span-2 space-y-2"><Label>Avatar URL</Label><Input value={form.avatarUrl} onChange={e => setForm((p: any) => ({ ...p, avatarUrl: e.target.value }))} placeholder="https://…" /></div>
+      <div className="col-span-2 space-y-2"><Label>Quote *</Label><textarea value={form.content} onChange={e => setForm((p: any) => ({ ...p, content: e.target.value }))} rows={3} placeholder="Their testimonial…" className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring" /></div>
+      <div className="col-span-2 space-y-2"><Label>Image URL</Label><Input value={form.image} onChange={e => setForm((p: any) => ({ ...p, image: e.target.value }))} placeholder="https://…" /></div>
     </div>
   )
 }

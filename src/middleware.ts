@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (parsedSession && isPublicRoute) {
-    return NextResponse.redirect(new URL('/tasks', request.url))
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   return NextResponse.next()
