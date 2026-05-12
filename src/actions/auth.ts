@@ -2,9 +2,11 @@
 
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
-import { encrypt } from "@/lib/auth"
+import { encrypt, decrypt } from "@/lib/auth"
 import bcrypt from "bcryptjs"
 import prisma from "@/lib/prisma"
+
+const isProduction = process.env.NODE_ENV === "production"
 
 export async function login(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
@@ -16,7 +18,7 @@ export async function login(prevState: any, formData: FormData) {
 
   const user = await prisma.user.findUnique({
     where: { email },
-    include: { workspaces: { include: { workspace: true } } }
+    include: { workspaces: { include: { workspace: true } } },
   })
 
   if (!user || !user.passwordHash) {
@@ -35,7 +37,12 @@ export async function login(prevState: any, formData: FormData) {
   const session = await encrypt({ userId: user.id, workspaceId: defaultWorkspaceId, expires })
 
   const cookieStore = await cookies()
-  cookieStore.set("session", session, { expires, httpOnly: true, secure: true, sameSite: 'lax' })
+  cookieStore.set("session", session, {
+    expires,
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: "lax",
+  })
 
   redirect("/tasks")
 }
@@ -56,7 +63,6 @@ export async function signup(prevState: any, formData: FormData) {
 
   const passwordHash = await bcrypt.hash(password, 10)
 
-  // Create User and their default Personal Workspace
   const user = await prisma.user.create({
     data: {
       email,
@@ -68,13 +74,13 @@ export async function signup(prevState: any, formData: FormData) {
           workspace: {
             create: {
               name: "Personal Workspace",
-              description: "My private workspace"
-            }
-          }
-        }
-      }
+              description: "My private workspace",
+            },
+          },
+        },
+      },
     },
-    include: { workspaces: true }
+    include: { workspaces: true },
   })
 
   const defaultWorkspaceId = user.workspaces[0].workspaceId
@@ -83,7 +89,12 @@ export async function signup(prevState: any, formData: FormData) {
   const session = await encrypt({ userId: user.id, workspaceId: defaultWorkspaceId, expires })
 
   const cookieStore = await cookies()
-  cookieStore.set("session", session, { expires, httpOnly: true, secure: true, sameSite: 'lax' })
+  cookieStore.set("session", session, {
+    expires,
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: "lax",
+  })
 
   redirect("/tasks")
 }
@@ -93,9 +104,6 @@ export async function logout() {
   cookieStore.delete("session")
   redirect("/login")
 }
-
-// Utility to get current context
-import { decrypt } from "@/lib/auth"
 
 export async function getCurrentUser() {
   const cookieStore = await cookies()
@@ -107,7 +115,7 @@ export async function getCurrentUser() {
     const user = await prisma.user.findUnique({ where: { id: parsed.userId } })
     if (!user) return null
     return { user, workspaceId: parsed.workspaceId }
-  } catch (error) {
+  } catch {
     return null
   }
 }

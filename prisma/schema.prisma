@@ -4,23 +4,32 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+// ─── Auth & Identity ──────────────────────────────────────────────────────────
+
 model User {
-  id            String            @id @default(cuid())
-  name          String?
-  email         String?           @unique
-  passwordHash  String?
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  activities    Activity[]
-  nutritionLogs NutritionLog[]
-  tasks         Task[]
-  settings      UserSettings?
-  metrics       WellnessMetric[]
-  workspaces    WorkspaceMember[]
+  id               String             @id @default(cuid())
+  name             String?
+  email            String?            @unique
+  passwordHash     String?
+  emailVerified    DateTime?
+  image            String?
+  onboarded        Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  activities       Activity[]
+  nutritionLogs    NutritionLog[]
+  sleepLogs        SleepLog[]
+  tasks            Task[]
+  settings         UserSettings?
+  metrics          WellnessMetric[]
+  workspaces       WorkspaceMember[]
+  posts            Post[]
+  communityPosts   CommunityPost[]    @relation("CommunityPostAuthor")
+  communityComments CommunityComment[] @relation("CommunityCommentAuthor")
+  hostedMeetings   Meeting[]          @relation("MeetingHost")
 }
 
 model UserSettings {
@@ -35,6 +44,8 @@ model UserSettings {
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// ─── Workspace & Membership ───────────────────────────────────────────────────
+
 model Workspace {
   id            String            @id @default(cuid())
   name          String
@@ -45,10 +56,11 @@ model Workspace {
   nutritionLogs NutritionLog[]
   tasks         Task[]
   members       WorkspaceMember[]
+  meetings      Meeting[]
+  communityPosts CommunityPost[]
 }
 
 model WorkspaceMember {
-  id          String    @id @default(cuid())
   workspaceId String
   userId      String
   role        String    @default("MEMBER")
@@ -57,74 +69,192 @@ model WorkspaceMember {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  @@unique([workspaceId, userId])
+  @@id([workspaceId, userId])
 }
 
-model Task {
-  id          String           @id @default(cuid())
+// ─── CMS & Marketing ─────────────────────────────────────────────────────────
+
+model Post {
+  id          String   @id @default(cuid())
   title       String
-  description String?
-  status      String           @default("TODO")
-  priority    String           @default("MEDIUM")
-  dueDate     DateTime?
-  workspaceId String
-  assigneeId  String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  activities  Activity[]
-  attachments FileAttachment[]
-  assignee    User?            @relation(fields: [assigneeId], references: [id])
-  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  slug        String   @unique
+  body        String
+  excerpt     String?
+  coverImage  String?
+  status      String   @default("DRAFT")
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(fields: [authorId], references: [id])
 }
 
-model FileAttachment {
+model Testimonial {
   id        String   @id @default(cuid())
   name      String
-  url       String
-  size      Int
-  taskId    String
-  createdAt DateTime @default(now())
-  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-}
-
-model Activity {
-  id          String    @id @default(cuid())
-  type        String
-  description String
-  workspaceId String
-  userId      String
-  taskId      String?
-  createdAt   DateTime  @default(now())
-  task        Task?     @relation(fields: [taskId], references: [id])
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-}
-
-model WellnessMetric {
-  id        String   @id @default(cuid())
-  userId    String
-  type      String
-  value     String
-  notes     String?
-  date      DateTime @default(now())
+  role      String
+  company   String?
+  content   String
+  image     String?
+  rating    Int      @default(5)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  bio       String?
+  image     String?
+  twitter   String?
+  linkedin  String?
+  github    String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PricingPlan {
+  id          String   @id @default(cuid())
+  name        String
+  price       String
+  interval    String   @default("month")
+  features    String[]
+  description String?
+  isPopular   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default("singleton")
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Platform Features ────────────────────────────────────────────────────────
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  status      String    @default("TODO")
+  priority    String    @default("MEDIUM")
+  dueDate     DateTime?
+  userId      String
+  workspaceId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  activities  Activity[]
 }
 
 model NutritionLog {
   id          String    @id @default(cuid())
   userId      String
   workspaceId String
-  mealType    String
-  name        String
-  calories    Int?
+  foodName    String
+  calories    Int
   protein     Int?
   carbs       Int?
   fat         Int?
+  mealType    String    @default("OTHER")
   date        DateTime  @default(now())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model SleepLog {
+  id           String   @id @default(cuid())
+  userId       String
+  date         DateTime
+  bedtime      DateTime
+  wakeTime     DateTime
+  durationMins Int
+  quality      String   @default("GOOD")
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Meetings ─────────────────────────────────────────────────────────────────
+
+model Meeting {
+  id          String    @id @default(cuid())
+  workspaceId String
+  title       String
+  description String?
+  status      String    @default("SCHEDULED")
+  hostId      String
+  roomName    String    @unique
+  startedAt   DateTime?
+  endedAt     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  host        User      @relation("MeetingHost", fields: [hostId], references: [id])
+}
+
+// ─── Community ───────────────────────────────────────────────────────────────
+
+model CommunityPost {
+  id          String             @id @default(cuid())
+  workspaceId String
+  authorId    String
+  title       String?
+  content     String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  workspace   Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  author      User               @relation("CommunityPostAuthor", fields: [authorId], references: [id])
+  comments    CommunityComment[]
+  likes       CommunityLike[]
+}
+
+model CommunityComment {
+  id        String        @id @default(cuid())
+  postId    String
+  authorId  String
+  content   String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User          @relation("CommunityCommentAuthor", fields: [authorId], references: [id])
+}
+
+model CommunityLike {
+  id        String        @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime      @default(now())
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model WellnessMetric {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  value     Float
+  date      DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Activity {
+  id          String    @id @default(cuid())
+  type        String
+  description String
+  userId      String
+  workspaceId String
+  taskId      String?
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  task        Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
 }

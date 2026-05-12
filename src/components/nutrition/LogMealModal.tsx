@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { logMeal } from "@/app/actions/nutrition"
+import { logMeal } from "@/actions/nutrition"
 
 export function LogMealModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const [isPending, startTransition] = useTransition()

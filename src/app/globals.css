@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -10,6 +9,37 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  
+  /* Brand Colors */
+  --color-sage: #8FB573;
+  --color-sage-dark: #5D7A4A;
+  --color-sage-light: #E9F1E2;
+  
+  --color-coral: #E07A6E;
+  --color-coral-dark: #B35E54;
+  --color-coral-light: #F9EAE8;
+  
+  --color-gold: #D4A853;
+  --color-gold-dark: #B08A3E;
+  --color-gold-light: #F9F1E2;
+  
+  --color-lavender: #9B8EC7;
+  --color-lavender-dark: #7C6EB0;
+  --color-lavender-light: #F2F0F9;
+  
+  --color-sky: #7EB5D6;
+  --color-sky-dark: #5C94B5;
+  --color-sky-light: #EEF5F9;
+  --color-cream: #FDFBF7;
+  --color-cream-dark: #F9F6F0;
+  --color-dark: #2D2D2D;
+  --color-gray-dark: #4A4A4A;
+  --color-gray: #6B6B6B;
+  --color-gray-light: #F5F5F5;
+
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-glass-hover: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,6 +76,34 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@utility heading-1 {
+  @apply text-4xl font-bold tracking-tight;
+}
+
+@utility heading-2 {
+  @apply text-3xl font-bold tracking-tight;
+}
+
+@utility heading-3 {
+  @apply text-2xl font-bold tracking-tight;
+}
+
+@utility heading-4 {
+  @apply text-xl font-bold tracking-tight;
+}
+
+@utility body {
+  @apply text-base leading-relaxed;
+}
+
+@utility shadow-glass {
+  box-shadow: var(--shadow-glass);
+}
+
+@utility shadow-glass-hover {
+  box-shadow: var(--shadow-glass-hover);
 }
 
 :root {

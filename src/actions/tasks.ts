@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache"
 import prisma from "@/lib/prisma"
-
 import { getCurrentUser } from "./auth"
+
 export async function getTasks() {
   const context = await getCurrentUser()
   if (!context) return []
@@ -25,6 +25,7 @@ export async function createTask(data: { title: string, description?: string, st
       status: data.status,
       priority: data.priority,
       workspaceId: context.workspaceId,
+      userId: context.user.id
     }
   })
 

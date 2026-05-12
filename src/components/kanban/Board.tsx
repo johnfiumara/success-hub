@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { updateTaskStatus, deleteTask } from "@/app/actions/tasks"
+import { updateTaskStatus, deleteTask } from "@/actions/tasks"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -10,10 +10,10 @@ import { format } from "date-fns"
 import { TaskModal } from "./TaskModal"
 
 const COLUMNS = [
-  { id: "TODO", title: "To Do", color: "bg-sage-light text-sage-dark border-sage" },
-  { id: "IN_PROGRESS", title: "In Progress", color: "bg-coral-light text-coral border-coral" },
-  { id: "REVIEW", title: "Review", color: "bg-blue-50 text-blue-700 border-blue-200" },
-  { id: "DONE", title: "Done", color: "bg-gray-100 text-gray-700 border-gray-200" },
+  { id: "TODO", title: "To Do", color: "bg-sage/10 text-sage-dark border-sage/30" },
+  { id: "IN_PROGRESS", title: "In Progress", color: "bg-coral/10 text-coral border-coral/30" },
+  { id: "REVIEW", title: "Review", color: "bg-sky/10 text-sky-dark border-sky/30" },
+  { id: "DONE", title: "Done", color: "bg-gold/10 text-gold-dark border-gold/30" },
 ]
 
 export function KanbanBoard({ initialTasks }: { initialTasks: any[] }) {
@@ -57,7 +57,7 @@ export function KanbanBoard({ initialTasks }: { initialTasks: any[] }) {
       {COLUMNS.map((col) => (
         <div 
           key={col.id} 
-          className="flex-shrink-0 w-80 bg-white/50 backdrop-blur-md rounded-2xl border border-gray-100 p-4 flex flex-col shadow-sm"
+          className="flex-shrink-0 w-80 bg-white/50 backdrop-blur-md rounded-2xl border border-cream-dark p-4 flex flex-col shadow-sm"
           onDragOver={handleDragOver}
           onDrop={(e) => handleDrop(e, col.id)}
         >
@@ -75,7 +75,7 @@ export function KanbanBoard({ initialTasks }: { initialTasks: any[] }) {
                 key={task.id}
                 draggable
                 onDragStart={(e) => handleDragStart(e, task.id)}
-                className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-grab active:cursor-grabbing hover:border-sage/50 transition-colors group"
+                className="bg-white p-4 rounded-xl shadow-sm border border-cream-dark cursor-grab active:cursor-grabbing hover:border-sage/50 transition-colors group"
                 onClick={() => { setEditingTask(task); setIsModalOpen(true); }}
               >
                 <div className="flex justify-between items-start mb-2">
@@ -89,7 +89,7 @@ export function KanbanBoard({ initialTasks }: { initialTasks: any[] }) {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-gray/50 hover:text-coral"
                     onClick={(e) => { e.stopPropagation(); handleDelete(task.id); }}
                   >
                     <Trash2 size={14} />
@@ -97,9 +97,9 @@ export function KanbanBoard({ initialTasks }: { initialTasks: any[] }) {
                 </div>
                 <h4 className="font-medium text-dark text-sm mb-1">{task.title}</h4>
                 {task.description && (
-                  <p className="text-xs text-gray-500 line-clamp-2 mb-3">{task.description}</p>
+                  <p className="text-xs text-gray/70 line-clamp-2 mb-3">{task.description}</p>
                 )}
-                <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                <div className="flex items-center justify-between text-xs text-gray/50 mt-2">
                   {task.dueDate ? (
                     <span className="flex items-center gap-1"><Calendar size={12}/> {format(new Date(task.dueDate), 'MMM d')}</span>
                   ) : <span></span>}

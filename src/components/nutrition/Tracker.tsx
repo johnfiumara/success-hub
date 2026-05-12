@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 import { Plus, Trash2, Apple } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LogMealModal } from "./LogMealModal"
-import { deleteMeal } from "@/app/actions/nutrition"
+import { deleteMeal } from "@/actions/nutrition"
 
 export function NutritionDashboard({ logs, settings }: { logs: any[], settings: any }) {
   const [isModalOpen, setIsModalOpen] = useState(false)

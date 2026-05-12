@@ -31,7 +31,7 @@ export async function updateUserSettings(data: { dailyCalories: number, dailyPro
   return settings
 }
 
-export async function logMeal(data: { name: string, mealType: string, calories: number, protein: number, carbs: number, fat: number, date?: Date }) {
+export async function logMeal(data: { name: string, mealType: string, calories: number, protein?: number, carbs?: number, fat?: number, date?: Date }) {
   const context = await getCurrentUser()
   if (!context) throw new Error("Unauthorized")
   
@@ -39,7 +39,7 @@ export async function logMeal(data: { name: string, mealType: string, calories: 
     data: {
       userId: context.user.id,
       workspaceId: context.workspaceId,
-      name: data.name,
+      foodName: data.name,
       mealType: data.mealType,
       calories: data.calories,
       protein: data.protein,

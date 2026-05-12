@@ -1,4 +1,4 @@
-import { getDailyNutrition, getUserSettings } from "@/app/actions/nutrition"
+import { getDailyNutrition, getUserSettings } from "@/actions/nutrition"
 import { NutritionDashboard } from "@/components/nutrition/Tracker"
 
 export const metadata = {

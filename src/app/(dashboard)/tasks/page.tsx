@@ -1,5 +1,5 @@
-import { getTasks, getActivities } from "@/app/actions/tasks"
-import { getCurrentUser } from "@/app/actions/auth"
+import { getTasks, getActivities } from "@/actions/tasks"
+import { getCurrentUser } from "@/actions/auth"
 import { KanbanBoard } from "@/components/kanban/Board"
 import { ActivityFeed } from "@/components/dashboard/ActivityFeed"
 import { redirect } from "next/navigation"
