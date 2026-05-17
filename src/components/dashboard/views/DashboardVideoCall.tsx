@@ -1,11 +1,10 @@
-// @ts-nocheck
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate, useParams } from 'react-router'
+import { useRouter, useParams } from 'next/navigation'
 import { Video, ArrowLeft, Mic, MicOff, Camera, CameraOff, PhoneOff, MonitorUp, MessageSquare, Users } from 'lucide-react'
 
 export default function DashboardVideoCall() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const { roomId } = useParams()
   const [micOn, setMicOn] = useState(true)
   const [camOn, setCamOn] = useState(true)
@@ -14,7 +13,7 @@ export default function DashboardVideoCall() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="h-[calc(100vh-80px)] flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate('/dashboard/video-rooms')} className="flex items-center gap-2 text-gray hover:text-sage-dark">
+          <button onClick={() => router.push('/dashboard/video-rooms')} className="flex items-center gap-2 text-gray hover:text-sage-dark">
             <ArrowLeft size={18} />
           </button>
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-sage/10">
@@ -49,10 +48,11 @@ export default function DashboardVideoCall() {
         <button className="w-12 h-12 rounded-full flex items-center justify-center bg-gray/10 text-gray hover:bg-gray/20">
           <MessageSquare size={20} />
         </button>
-        <button onClick={() => navigate('/dashboard/video-rooms')} className="w-12 h-12 rounded-full flex items-center justify-center bg-coral text-white hover:bg-coral/90">
+        <button onClick={() => router.push('/dashboard/video-rooms')} className="w-12 h-12 rounded-full flex items-center justify-center bg-coral text-white hover:bg-coral/90">
           <PhoneOff size={20} />
         </button>
       </div>
     </motion.div>
   )
 }
+

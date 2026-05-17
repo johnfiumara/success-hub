@@ -6,13 +6,13 @@ import { getCurrentUser } from "./auth"
 
 async function getContext() {
   const context = await getCurrentUser()
-  if (!context) return null
+  if (!context || !context.workspaceId) return null
 
   const member = await prisma.workspaceMember.findUnique({
     where: { workspaceId_userId: { workspaceId: context.workspaceId, userId: context.user.id } }
   })
 
-  return { ...context, role: member?.role ?? "MEMBER" }
+  return { ...context, workspaceId: context.workspaceId, role: member?.role ?? "MEMBER" }
 }
 
 export async function getCommunityPosts() {

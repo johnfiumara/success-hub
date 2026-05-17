@@ -6,7 +6,7 @@ import { getCurrentUser } from "./auth"
 
 export async function getTasks() {
   const context = await getCurrentUser()
-  if (!context) return []
+  if (!context || !context.workspaceId) return []
 
   return await prisma.task.findMany({
     where: { workspaceId: context.workspaceId },
@@ -16,7 +16,9 @@ export async function getTasks() {
 
 export async function createTask(data: { title: string, description?: string, status: string, priority: string }) {
   const context = await getCurrentUser()
-  if (!context) throw new Error("Unauthorized")
+  if (!context || !context.workspaceId) throw new Error("Unauthorized")
+
+  const workspaceId = context.workspaceId
 
   const task = await prisma.task.create({
     data: {
@@ -24,7 +26,7 @@ export async function createTask(data: { title: string, description?: string, st
       description: data.description,
       status: data.status,
       priority: data.priority,
-      workspaceId: context.workspaceId,
+      workspaceId,
       userId: context.user.id
     }
   })
@@ -34,7 +36,7 @@ export async function createTask(data: { title: string, description?: string, st
     data: {
       type: 'TASK_CREATED',
       description: `Created task "${task.title}"`,
-      workspaceId: context.workspaceId,
+      workspaceId,
       taskId: task.id,
       userId: context.user.id
     }
@@ -46,10 +48,12 @@ export async function createTask(data: { title: string, description?: string, st
 
 export async function updateTaskStatus(taskId: string, newStatus: string) {
   const context = await getCurrentUser()
-  if (!context) throw new Error("Unauthorized")
+  if (!context || !context.workspaceId) throw new Error("Unauthorized")
+
+  const workspaceId = context.workspaceId
 
   const task = await prisma.task.update({
-    where: { id: taskId, workspaceId: context.workspaceId },
+    where: { id: taskId, workspaceId },
     data: { status: newStatus }
   })
 
@@ -69,10 +73,12 @@ export async function updateTaskStatus(taskId: string, newStatus: string) {
 
 export async function updateTask(taskId: string, data: { title?: string, description?: string, priority?: string }) {
   const context = await getCurrentUser()
-  if (!context) throw new Error("Unauthorized")
+  if (!context || !context.workspaceId) throw new Error("Unauthorized")
+
+  const workspaceId = context.workspaceId
 
   const task = await prisma.task.update({
-    where: { id: taskId, workspaceId: context.workspaceId },
+    where: { id: taskId, workspaceId },
     data
   })
   revalidatePath('/tasks')
@@ -81,10 +87,12 @@ export async function updateTask(taskId: string, data: { title?: string, descrip
 
 export async function deleteTask(taskId: string) {
   const context = await getCurrentUser()
-  if (!context) throw new Error("Unauthorized")
+  if (!context || !context.workspaceId) throw new Error("Unauthorized")
+
+  const workspaceId = context.workspaceId
 
   const task = await prisma.task.delete({
-    where: { id: taskId, workspaceId: context.workspaceId }
+    where: { id: taskId, workspaceId }
   })
   revalidatePath('/tasks')
   return task
@@ -92,7 +100,7 @@ export async function deleteTask(taskId: string) {
 
 export async function getActivities() {
   const context = await getCurrentUser()
-  if (!context) return []
+  if (!context || !context.workspaceId) return []
 
   return await prisma.activity.findMany({
     where: { workspaceId: context.workspaceId },

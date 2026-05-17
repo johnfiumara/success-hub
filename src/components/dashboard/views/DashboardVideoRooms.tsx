@@ -1,10 +1,9 @@
-// @ts-nocheck
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { Video, ArrowLeft, Flame, Moon, Apple, CalendarDays, Users, ChevronRight } from 'lucide-react'
 
 export default function DashboardVideoRooms() {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const links = [
     { label: 'Workout Planner', to: '/dashboard/workout', icon: Flame, color: 'coral' },
@@ -17,7 +16,7 @@ export default function DashboardVideoRooms() {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
       <div className="flex items-center gap-4">
-        <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors">
+        <button onClick={() => router.push('/dashboard')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors">
           <ArrowLeft size={18} />
         </button>
         <div className="flex items-center gap-3">
@@ -38,7 +37,7 @@ export default function DashboardVideoRooms() {
           <h3 className="heading-4 text-dark mb-4">Quick Links</h3>
           <div className="space-y-2">
             {links.map(link => (
-              <button key={link.to} onClick={() => navigate(link.to)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-sage/5 transition-colors text-left">
+              <button key={link.to} onClick={() => router.push(link.to)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-sage/5 transition-colors text-left">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${link.color}/15`}>
                   <link.icon size={16} className={`text-${link.color}`} />
                 </div>
@@ -52,3 +51,4 @@ export default function DashboardVideoRooms() {
     </motion.div>
   )
 }
+

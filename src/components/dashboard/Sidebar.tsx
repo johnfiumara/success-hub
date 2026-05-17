@@ -1,12 +1,15 @@
 import Link from "next/link"
-import { Home, CheckSquare, Settings, LogOut, Flame, Apple, Moon, Video, Users, LayoutDashboard, Heart } from "lucide-react"
+import { Home, CheckSquare, Settings, LogOut, Flame, Apple, Moon, Video, Users, LayoutDashboard, Heart, BarChart3, Sparkles } from "lucide-react"
 import { getCurrentUser, logout } from "@/actions/auth"
 import prisma from "@/lib/prisma"
+import { NavItem } from "./NavItem"
 
 export async function Sidebar() {
   const context = await getCurrentUser()
   if (!context) return null
   const { user, workspaceId } = context
+
+  if (!workspaceId) return null
 
   const workspace = await prisma.workspace.findUnique({ where: { id: workspaceId } })
   const membership = await prisma.workspaceMember.findUnique({
@@ -32,11 +35,13 @@ export async function Sidebar() {
 
       <nav className="flex-1 px-4 py-4 space-y-1">
         <NavItem href="/" exact icon={<Home size={18} />}>Overview</NavItem>
+        <NavItem href="/ai-guide" icon={<Sparkles size={18} />}>AI Guide</NavItem>
         <NavItem href="/nutrition" icon={<Apple size={18} />}>Nutrition</NavItem>
         <NavItem href="/workout" icon={<Flame size={18} />}>Workouts</NavItem>
         <NavItem href="/tasks" icon={<CheckSquare size={18} />}>Tasks & Habits</NavItem>
         <NavItem href="/sleep" icon={<Moon size={18} />}>Sleep</NavItem>
         <NavItem href="/wellness" icon={<Heart size={18} />}>Wellness</NavItem>
+        <NavItem href="/progress" icon={<BarChart3 size={18} />}>Progress</NavItem>
         <NavItem href="/community" icon={<Users size={18} />}>Community</NavItem>
         <NavItem href="/meetings" icon={<Video size={18} />}>Meetings</NavItem>
         <NavItem href="/settings" icon={<Settings size={18} />}>Settings</NavItem>
@@ -68,13 +73,5 @@ export async function Sidebar() {
         </form>
       </div>
     </div>
-  )
-}
-
-function NavItem({ href, icon, children, exact }: { href: string; icon: React.ReactNode; children: React.ReactNode; exact?: boolean }) {
-  return (
-    <Link href={href} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray hover:text-dark hover:bg-sage/10 transition-colors">
-      {icon} {children}
-    </Link>
   )
 }

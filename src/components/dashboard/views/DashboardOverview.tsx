@@ -1,17 +1,16 @@
-// @ts-nocheck
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
 import { Flame, Moon, Apple, CalendarDays, Users, Target } from 'lucide-react'
+import { getDashboardStats } from '@/actions/dashboard'
+import Link from 'next/link'
 
-export default function DashboardOverview() {
-  const navigate = useNavigate()
-  const [stats] = useState([
-    { label: 'Workouts This Week', value: '5', icon: Flame, colorClass: 'bg-coral/15 text-coral', sub: 'Goal: 5', to: '/dashboard/workout' },
-    { label: 'Avg Sleep', value: '7.5h', icon: Moon, colorClass: 'bg-lavender/15 text-lavender', sub: 'Goal: 8h', to: '/dashboard/sleep' },
-    { label: 'Meals Logged', value: '21', icon: Apple, colorClass: 'bg-sage/15 text-sage', sub: 'This week', to: '/dashboard/nutrition' },
-    { label: 'Co-Work Sessions', value: '4', icon: CalendarDays, colorClass: 'bg-gold/15 text-gold', sub: 'This week', to: '/dashboard/schedule' },
-  ])
+export default async function DashboardOverview() {
+  const statsData = await getDashboardStats();
+
+  const stats = [
+    { label: 'Workouts This Week', value: statsData.workouts, icon: Flame, colorClass: 'bg-coral/15 text-coral', sub: 'Goal: 5', to: '/dashboard/workout' },
+    { label: 'Avg Sleep', value: statsData.avgSleep, icon: Moon, colorClass: 'bg-lavender/15 text-lavender', sub: 'Goal: 8h', to: '/dashboard/sleep' },
+    { label: 'Meals Logged', value: statsData.meals, icon: Apple, colorClass: 'bg-sage/15 text-sage', sub: 'This week', to: '/dashboard/nutrition' },
+    { label: 'Co-Work Sessions', value: statsData.sessions, icon: CalendarDays, colorClass: 'bg-gold/15 text-gold', sub: 'This week', to: '/dashboard/schedule' },
+  ]
 
   const quickActions = [
     { label: 'Log Workout', to: '/dashboard/workout', icon: Flame, colorClass: 'bg-coral/15 text-coral' },
@@ -23,7 +22,7 @@ export default function DashboardOverview() {
   ]
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="heading-1 text-dark">Dashboard Overview</h1>
         <p className="body text-gray mt-1">Your work-life balance at a glance</p>
@@ -31,31 +30,38 @@ export default function DashboardOverview() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => (
-          <motion.button key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} onClick={() => navigate(s.to)} className="rounded-2xl p-5 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass text-left hover:-translate-y-1 transition-all">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${s.colorClass}`}>
-              <s.icon size={20} />
+          <Link 
+            href={s.to}
+            key={i} 
+            className="rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass text-left hover:-translate-y-1 transition-all group"
+          >
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${s.colorClass}`}>
+              <s.icon size={24} />
             </div>
-            <p className="text-2xl font-bold text-dark">{s.value}</p>
-            <p className="text-sm text-gray">{s.label}</p>
-            <p className="text-xs text-gray-light">{s.sub}</p>
-          </motion.button>
+            <p className="text-3xl font-bold text-dark mb-1">{s.value}</p>
+            <p className="text-sm font-medium text-gray">{s.label}</p>
+            <p className="text-xs text-gray-light mt-1">{s.sub}</p>
+          </Link>
         ))}
       </div>
 
-      <div className="rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
-        <h2 className="heading-4 text-dark mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="rounded-3xl p-8 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
+        <h2 className="heading-4 text-dark mb-6">Quick Actions</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {quickActions.map(a => (
-            <button key={a.to} onClick={() => navigate(a.to)} className="flex items-center gap-3 p-4 rounded-xl hover:bg-sage/5 transition-colors border border-transparent hover:border-sage/10">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${a.colorClass}`}>
-                <a.icon size={20} />
+            <Link 
+              href={a.to}
+              key={a.to} 
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gray-50/50 hover:bg-sage/5 transition-all border border-transparent hover:border-sage/10 group"
+            >
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${a.colorClass}`}>
+                <a.icon size={24} />
               </div>
-              <span className="text-sm text-dark font-medium">{a.label}</span>
-            </button>
+              <span className="text-xs font-bold text-dark uppercase tracking-wider">{a.label}</span>
+            </Link>
           ))}
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
-

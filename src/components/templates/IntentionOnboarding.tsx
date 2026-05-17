@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
@@ -143,7 +142,7 @@ const focusAreas = [
 ]
 
 export default function IntentionOnboarding() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [selected, setSelected] = useState<string[]>([])
 
   const toggleArea = (id: string) => {
@@ -163,7 +162,7 @@ export default function IntentionOnboarding() {
       >
         <div className="max-w-[1200px] mx-auto relative z-10">
           <motion.button
-            onClick={() => navigate('/')}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2 text-dark/70 hover:text-coral transition-colors mb-8 group"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -331,7 +330,7 @@ export default function IntentionOnboarding() {
             Begin crafting your personalized 28-day transformation plan with Cherry Blossom.
           </p>
           <button
-            onClick={() => navigate('/intention-setting')}
+            onClick={() => router.push('/intention-setting')}
             className="btn-primary text-lg px-10 py-4"
           >
             <Target size={22} className="inline mr-2 -mt-1" />
@@ -352,3 +351,4 @@ export default function IntentionOnboarding() {
     </div>
   )
 }
+

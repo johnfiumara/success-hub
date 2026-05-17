@@ -1,11 +1,10 @@
-// @ts-nocheck
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 
 export default function ForgotPassword() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
 
@@ -17,7 +16,7 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sage-light via-cream to-blush">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full mx-4">
-        <button onClick={() => navigate('/auth/login')} className="flex items-center gap-2 text-gray hover:text-sage-dark mb-6">
+        <button onClick={() => router.push('/auth/login')} className="flex items-center gap-2 text-gray hover:text-sage-dark mb-6">
           <ArrowLeft size={18} /> Back to Login
         </button>
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/60 shadow-glass">
@@ -45,3 +44,4 @@ export default function ForgotPassword() {
     </div>
   )
 }
+

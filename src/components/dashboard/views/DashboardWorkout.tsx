@@ -1,54 +1,78 @@
-// @ts-nocheck
-import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
-import { Dumbbell, ArrowLeft, Flame, Moon, Apple, CalendarDays, Users, ChevronRight } from 'lucide-react'
+"use client";
 
-export default function DashboardWorkout() {
-  const navigate = useNavigate()
+import { useState } from "react";
+import { Activity } from "@prisma/client";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { Flame, ArrowLeft, Plus } from "lucide-react";
+import { WorkoutTracker } from "@/components/workout/Tracker";
+import { getWorkouts } from "@/actions/workout";
 
-  const links = [
-    { label: 'Workout Planner', to: '/dashboard/workout', icon: Flame, color: 'coral' },
-    { label: 'Sleep Tracker', to: '/dashboard/sleep', icon: Moon, color: 'lavender' },
-    { label: 'Nutrition', to: '/dashboard/nutrition', icon: Apple, color: 'sage' },
-    { label: 'Schedule', to: '/dashboard/schedule', icon: CalendarDays, color: 'gold' },
-    { label: 'Community', to: '/dashboard/community', icon: Users, color: 'sky' },
-  ]
+interface DashboardWorkoutProps {
+  initialWorkouts: any[];
+}
+
+export default function DashboardWorkout({ initialWorkouts }: DashboardWorkoutProps) {
+  const router = useRouter();
+  const [workouts, setWorkouts] = useState<any[]>(initialWorkouts);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const refreshWorkouts = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getWorkouts();
+      setWorkouts(data);
+    } catch (error) {
+      console.error("Failed to fetch workouts:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
-      <div className="flex items-center gap-4">
-        <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors">
-          <ArrowLeft size={18} />
-        </button>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-sage/10">
-            <Dumbbell size={20} className="text-sage" />
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-6xl mx-auto space-y-8"
+    >
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.push("/")}
+            className="p-2 rounded-xl bg-white border border-gray-100 text-gray hover:text-dark hover:shadow-md transition-all"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="p-1.5 rounded-lg bg-coral/10 text-coral">
+                <Flame size={16} />
+              </div>
+              <h1 className="text-2xl font-bold text-dark tracking-tight">Fitness & Training</h1>
+            </div>
+            <p className="text-gray-500 text-sm">Plan and track your daily physical activity and performance</p>
           </div>
-          <h1 className="heading-1 text-dark">Workout Planner</h1>
         </div>
-      </div>
-      <p className="body text-gray -mt-4 ml-14">Plan and track your fitness routine</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
-          <h2 className="heading-4 text-dark mb-4">Coming Soon</h2>
-          <p className="text-body text-gray">This section is being built. Check back soon for the full Workout Planner experience.</p>
-        </div>
-        <div className="rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
-          <h3 className="heading-4 text-dark mb-4">Quick Links</h3>
-          <div className="space-y-2">
-            {links.map(link => (
-              <button key={link.to} onClick={() => navigate(link.to)} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-sage/5 transition-colors text-left">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-${link.color}/15`}>
-                  <link.icon size={16} className={`text-${link.color}`} />
-                </div>
-                <span className="text-sm text-dark flex-1">{link.label}</span>
-                <ChevronRight size={14} className="text-gray" />
-              </button>
-            ))}
+        <button 
+          onClick={() => {}} // Modal to add workout
+          className="flex items-center gap-2 px-4 py-2.5 bg-dark text-white rounded-xl font-semibold hover:bg-dark/90 transition-all shadow-lg shadow-dark/10"
+        >
+          <Plus size={18} />
+          <span>New Workout</span>
+        </button>
+      </div>
+
+      <div className="bg-white/60 backdrop-blur-xl border border-white/60 shadow-glass rounded-3xl p-6 md:p-8">
+        {isLoading ? (
+          <div className="flex h-64 items-center justify-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-coral/20 border-t-coral"></div>
           </div>
-        </div>
+        ) : (
+          <WorkoutTracker initialWorkouts={workouts} />
+        )}
       </div>
     </motion.div>
-  )
+  );
 }

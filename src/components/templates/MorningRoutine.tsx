@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   Sunrise,
@@ -128,7 +127,7 @@ const checklistItems = [
 ]
 
 export default function MorningRoutine() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [checked, setChecked] = useState<Set<number>>(new Set())
 
   const toggleCheck = (index: number) => {
@@ -152,7 +151,7 @@ export default function MorningRoutine() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMSIgZmlsbD0iI2RmYjg1NSIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')] opacity-40" />
         <div className="max-w-[1200px] mx-auto px-6 pt-12 pb-20 relative">
           <motion.button
-            onClick={() => navigate('/')}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2 text-gray hover:text-dark transition-colors mb-8 group"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -375,7 +374,7 @@ export default function MorningRoutine() {
               Join our community and start each day with intention, clarity, and divine connection.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => navigate('/dashboard/schedule')} className="btn-primary">Join The Morning Routine</button>
+              <button onClick={() => router.push('/dashboard/schedule')} className="btn-primary">Join The Morning Routine</button>
               <button className="btn-outline-sage flex items-center justify-center gap-2">
                 <Bell size={18} />
                 Set Your Morning Reminder
@@ -387,3 +386,4 @@ export default function MorningRoutine() {
     </main>
   )
 }
+

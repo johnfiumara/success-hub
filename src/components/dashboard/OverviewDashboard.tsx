@@ -10,6 +10,7 @@ interface OverviewStats {
   completedTasks: number
   avgSleep: string
   calories: number
+  calorieGoal: number
   workoutsThisWeek: number
   latestMood: string | number
 }
@@ -37,7 +38,7 @@ export function OverviewDashboard({ stats, activities }: { stats: OverviewStats,
     {
       label: "Calories",
       value: `${stats.calories}`,
-      sub: "Today's total",
+      sub: `Goal: ${stats.calorieGoal}`,
       icon: Apple,
       color: "text-sage",
       bg: "bg-sage/10",
@@ -94,7 +95,7 @@ export function OverviewDashboard({ stats, activities }: { stats: OverviewStats,
                 <span className="text-gray-600 font-medium">Daily Tasks</span>
                 <span className="text-dark font-bold">{Math.round((stats.completedTasks / (stats.tasksCount || 1)) * 100)}%</span>
               </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${(stats.completedTasks / (stats.tasksCount || 1)) * 100}%` }}
@@ -105,13 +106,13 @@ export function OverviewDashboard({ stats, activities }: { stats: OverviewStats,
 
             <div>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-600 font-medium">Nutrition Goal</span>
-                <span className="text-dark font-bold">{Math.min(100, Math.round((stats.calories / 2500) * 100))}%</span>
+                <span className="text-gray-600 font-medium">Nutrition Goal ({stats.calorieGoal} kcal)</span>
+                <span className="text-dark font-bold">{Math.min(100, Math.round((stats.calories / (stats.calorieGoal || 2500)) * 100))}%</span>
               </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, (stats.calories / 2500) * 100)}%` }}
+                  animate={{ width: `${Math.min(100, (stats.calories / (stats.calorieGoal || 2500)) * 100)}%` }}
                   className="h-full bg-sage rounded-full"
                 />
               </div>

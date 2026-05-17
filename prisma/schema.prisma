@@ -25,23 +25,28 @@ model User {
   tasks            Task[]
   settings         UserSettings?
   metrics          WellnessMetric[]
+  balanceAudit     BalanceAudit?
   workspaces       WorkspaceMember[]
   posts            Post[]
   communityPosts   CommunityPost[]    @relation("CommunityPostAuthor")
   communityComments CommunityComment[] @relation("CommunityCommentAuthor")
   hostedMeetings   Meeting[]          @relation("MeetingHost")
+  emailIntegration EmailIntegration?
 }
 
 model UserSettings {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  dailyCalories Int      @default(2000)
-  dailyProtein  Int      @default(150)
-  dailyCarbs    Int      @default(200)
-  dailyFat      Int      @default(65)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  dailyCalories       Int      @default(2000)
+  dailyProtein        Int      @default(150)
+  dailyCarbs          Int      @default(200)
+  dailyFat            Int      @default(65)
+  targetBedtime       String   @default("22:00")
+  targetWakeTime      String   @default("06:00")
+  targetSleepDuration Int      @default(8)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ─── Workspace & Membership ───────────────────────────────────────────────────
@@ -238,6 +243,16 @@ model CommunityLike {
   @@unique([postId, userId])
 }
 
+model BalanceAudit {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  scores    Json     // Stores an object of area scores
+  insights  String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model WellnessMetric {
   id        String   @id @default(cuid())
   userId    String
@@ -258,4 +273,17 @@ model Activity {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   task        Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+}
+
+// ─── External Integrations ───────────────────────────────────────────────────
+
+model EmailIntegration {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  emailAddress String
+  provider     String   @default("GMAIL")
+  appPassword  String   
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

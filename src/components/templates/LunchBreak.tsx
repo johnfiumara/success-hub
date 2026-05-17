@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   UtensilsCrossed,
@@ -173,7 +172,7 @@ const recipes: Recipe[] = [
 ]
 
 export default function LunchBreak() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [savedRecipes, setSavedRecipes] = useState<Set<number>>(new Set())
 
   const toggleSave = (index: number) => {
@@ -195,7 +194,7 @@ export default function LunchBreak() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMSIgZmlsbD0iIzhmYjU3MyIgZmlsbC1vcGFjaXR5PSIwLjE1Ii8+PC9zdmc+')] opacity-40" />
         <div className="max-w-[1200px] mx-auto px-6 pt-12 pb-20 relative">
           <motion.button
-            onClick={() => navigate('/')}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2 text-[#6B6B6B] hover:text-[#2D2D2D] transition-colors mb-8 group"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -408,11 +407,11 @@ export default function LunchBreak() {
               Post your healthy lunch creations and discover recipes from our community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => navigate('/dashboard/community')} className="btn-primary flex items-center justify-center gap-2">
+              <button onClick={() => router.push('/dashboard/community')} className="btn-primary flex items-center justify-center gap-2">
                 <Share2 size={18} />
                 Post Your Lunch
               </button>
-              <button onClick={() => navigate('/dashboard/community')} className="btn-outline-sage flex items-center justify-center gap-2">
+              <button onClick={() => router.push('/dashboard/community')} className="btn-outline-sage flex items-center justify-center gap-2">
                 <ChefHat size={18} />
                 Share a Recipe
               </button>
@@ -423,3 +422,4 @@ export default function LunchBreak() {
     </main>
   )
 }
+

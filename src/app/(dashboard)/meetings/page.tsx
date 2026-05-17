@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function MeetingsPage() {
   const context = await getCurrentUser()
-  if (!context) redirect("/login")
+  if (!context || !context.workspaceId) redirect("/dashboard")
 
   const res = await getMeetings(context.workspaceId)
 

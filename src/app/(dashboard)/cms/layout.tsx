@@ -7,6 +7,8 @@ export default async function CmsLayout({ children }: { children: React.ReactNod
   const context = await getCurrentUser()
   if (!context) redirect("/login")
 
+  if (!context.workspaceId) redirect("/")
+
   const membership = await prisma.workspaceMember.findUnique({
     where: { workspaceId_userId: { workspaceId: context.workspaceId, userId: context.user.id } }
   })

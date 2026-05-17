@@ -8,7 +8,7 @@ import { LogSleepModal } from "./LogSleepModal"
 import { deleteSleepLog } from "@/actions/sleep"
 import { format } from "date-fns"
 
-export function SleepTracker({ logs }: { logs: any[] }) {
+export function SleepTracker({ logs, targetDuration = 8 }: { logs: any[], targetDuration?: number }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleDelete = async (id: string) => {
@@ -69,7 +69,7 @@ export function SleepTracker({ logs }: { logs: any[] }) {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Avg Duration</p>
-            <p className="text-2xl font-bold text-dark">{avgDuration}h</p>
+            <p className="text-2xl font-bold text-dark">{avgDuration}h <span className="text-sm font-normal text-gray-400">/ {targetDuration}h</span></p>
           </div>
         </div>
         <div className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass rounded-2xl p-6 flex items-center gap-4">

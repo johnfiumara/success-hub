@@ -1,7 +1,6 @@
-// @ts-nocheck
 import { memo } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Sparkles, Palette, Users, TreePine, BookOpen, Wine, Music, Camera, Heart, GraduationCap, Mountain, Flower2, Utensils, Brush } from 'lucide-react'
 
 const experiences = [
@@ -27,13 +26,13 @@ const categories = [
 ]
 
 const LifestyleExperiences = memo(function LifestyleExperiences() {
-  const navigate = useNavigate()
+  const router = useRouter()
   return (
     <div className="min-h-screen">
       {/* Hero */}
       <section className="relative section-padding overflow-hidden bg-gradient-to-br from-sage/20 via-cream to-gold/20">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.button onClick={() => navigate('/#cherry-blossom')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors mb-8" whileHover={{ x: -4 }}>
+          <motion.button onClick={() => router.push('/#cherry-blossom')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors mb-8" whileHover={{ x: -4 }}>
             <ArrowLeft size={18} />
             <span className="text-body-sm">Back to Home</span>
           </motion.button>
@@ -103,7 +102,7 @@ const LifestyleExperiences = memo(function LifestyleExperiences() {
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
             <h2 className="text-heading-2 text-white mb-4">Ready to Explore?</h2>
             <p className="text-body-lg text-white/90 mb-8">Start planning your quality lifestyle experiences and make every evening and weekend count.</p>
-            <button onClick={() => navigate('/dashboard/schedule')} className="bg-white text-coral font-semibold px-8 py-4 rounded-full text-body-sm hover:shadow-lg transition-all">Plan Your Experiences</button>
+            <button onClick={() => router.push('/dashboard/schedule')} className="bg-white text-coral font-semibold px-8 py-4 rounded-full text-body-sm hover:shadow-lg transition-all">Plan Your Experiences</button>
           </motion.div>
         </div>
       </section>
@@ -112,3 +111,4 @@ const LifestyleExperiences = memo(function LifestyleExperiences() {
 })
 
 export default LifestyleExperiences
+

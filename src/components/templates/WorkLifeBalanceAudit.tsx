@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft,
@@ -113,7 +112,7 @@ const auditSteps = [
 ]
 
 export default function WorkLifeBalanceAudit() {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   return (
     <div className="min-h-[100dvh] bg-cream">
@@ -123,7 +122,7 @@ export default function WorkLifeBalanceAudit() {
       >
         <div className="max-w-[1200px] mx-auto relative z-10">
           <motion.button
-            onClick={() => navigate('/')}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2 text-dark/70 hover:text-sage transition-colors mb-8 group"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -255,14 +254,14 @@ export default function WorkLifeBalanceAudit() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate('/audit-onboarding')}
+              onClick={() => router.push('/audit-onboarding')}
               className="btn-primary text-lg px-10 py-4"
             >
               <Play size={22} className="inline mr-2 -mt-0.5" />
               Begin The Audit
             </button>
             <button
-              onClick={() => navigate('/#onboarding')}
+              onClick={() => router.push('/#onboarding')}
               className="btn-outline-sage text-lg px-10 py-4"
             >
               <BookOpen size={22} className="inline mr-2 -mt-0.5" />

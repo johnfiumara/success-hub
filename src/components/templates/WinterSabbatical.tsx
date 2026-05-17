@@ -1,16 +1,15 @@
-// @ts-nocheck
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Snowflake } from 'lucide-react'
 
 export default function WinterSabbatical() {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   return (
     <div className="min-h-screen">
       <section className="relative section-padding overflow-hidden bg-gradient-to-br from-lavender/20 via-cream to-sage/20">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.button onClick={() => navigate('/')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors mb-8" whileHover={{ x: -4 }}>
+          <motion.button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray hover:text-sage-dark transition-colors mb-8" whileHover={{ x: -4 }}>
             <ArrowLeft size={18} />
             <span className="text-body-sm">Back to Home</span>
           </motion.button>
@@ -27,3 +26,4 @@ export default function WinterSabbatical() {
     </div>
   )
 }
+

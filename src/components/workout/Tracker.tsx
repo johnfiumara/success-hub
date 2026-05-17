@@ -2,33 +2,39 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Dumbbell, Plus, History, Flame, Clock, Trash2, Loader2 } from "lucide-react"
+import { Dumbbell, Plus, History, Flame, Clock, Loader2, Sparkles, Zap, Wind, Smile } from "lucide-react"
 import { format } from "date-fns"
-import { logWorkout, getWorkouts } from "@/actions/workout"
+import { logWorkout } from "@/actions/workout"
 import { useRouter } from "next/navigation"
 
-interface Workout {
+export interface Workout {
   id: string
   type: string
   description: string
   createdAt: Date
 }
 
-export function WorkoutTracker({ initialWorkouts }: { initialWorkouts: any[] }) {
+const WORKOUT_TEMPLATES = [
+  { id: "yoga", title: "Yoga Flow", icon: Smile, color: "text-lavender", bgColor: "bg-lavender/10", desc: "Balance and flexibility" },
+  { id: "mobility", title: "Mobility Work", icon: Sparkles, color: "text-gold", bgColor: "bg-gold/10", desc: "Range of motion" },
+  { id: "breathwork", title: "Breathwork", icon: Wind, color: "text-sage", bgColor: "bg-sage/10", desc: "Energy and focus" },
+  { id: "strength", title: "Strength", icon: Zap, color: "text-coral", bgColor: "bg-coral/10", desc: "Power and endurance" },
+]
+
+export function WorkoutTracker({ initialWorkouts }: { initialWorkouts: Workout[] }) {
   const [workouts, setWorkouts] = useState(initialWorkouts)
   const [description, setDescription] = useState("")
   const [isLogging, setIsLogging] = useState(false)
   const router = useRouter()
 
-  const handleLogWorkout = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!description.trim()) return
+  const handleLogWorkout = async (desc: string) => {
+    if (!desc.trim()) return
 
     setIsLogging(true)
     try {
       const newWorkout = await logWorkout({
         type: "WORKOUT",
-        description: description.trim()
+        description: desc.trim()
       })
       setWorkouts([newWorkout, ...workouts])
       setDescription("")
@@ -41,8 +47,8 @@ export function WorkoutTracker({ initialWorkouts }: { initialWorkouts: any[] }) 
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Log Workout Form */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Log Workout Form & Templates */}
       <div className="lg:col-span-1 space-y-6">
         <div className="rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
           <div className="flex items-center gap-3 mb-6">
@@ -52,14 +58,20 @@ export function WorkoutTracker({ initialWorkouts }: { initialWorkouts: any[] }) 
             <h2 className="heading-4 text-dark">Log Session</h2>
           </div>
 
-          <form onSubmit={handleLogWorkout} className="space-y-4">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogWorkout(description);
+            }} 
+            className="space-y-4"
+          >
             <div>
               <label className="block text-sm font-medium text-gray mb-1.5">What did you do?</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="e.g. 5km Run, Upper Body Session, Yoga..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-coral transition-all resize-none h-32"
+                className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-coral/20 focus:border-coral transition-all resize-none h-24"
                 required
               />
             </div>
@@ -73,6 +85,31 @@ export function WorkoutTracker({ initialWorkouts }: { initialWorkouts: any[] }) 
               {isLogging ? "Logging..." : "Log Workout"}
             </button>
           </form>
+        </div>
+
+        <div className="rounded-2xl p-6 bg-white/80 backdrop-blur-xl border border-white/60 shadow-glass">
+          <h3 className="heading-4 text-dark mb-4 flex items-center gap-2">
+            <Sparkles size={18} className="text-gold" />
+            Quick Templates
+          </h3>
+          <div className="grid grid-cols-1 gap-3">
+            {WORKOUT_TEMPLATES.map((template) => (
+              <button
+                key={template.id}
+                onClick={() => handleLogWorkout(template.title)}
+                disabled={isLogging}
+                className="flex items-center gap-3 p-3 rounded-xl border border-gray-50 hover:border-sage/30 hover:bg-sage/5 transition-all group text-left"
+              >
+                <div className={`w-10 h-10 rounded-lg ${template.bgColor} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                  <template.icon size={20} className={template.color} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-dark">{template.title}</p>
+                  <p className="text-xs text-gray truncate">{template.desc}</p>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="rounded-2xl p-6 bg-gradient-to-br from-coral to-coral-dark text-white shadow-lg shadow-coral/20">

@@ -6,7 +6,7 @@ import { getCurrentUser } from "./auth"
 
 export async function logWorkout(data: { type: string; description: string; taskId?: string }) {
   const context = await getCurrentUser()
-  if (!context) throw new Error("Unauthorized")
+  if (!context || !context.workspaceId) throw new Error("Unauthorized")
 
   const activity = await prisma.activity.create({
     data: {

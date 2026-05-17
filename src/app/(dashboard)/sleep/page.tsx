@@ -1,5 +1,6 @@
 import { getSleepLogs } from "@/actions/sleep"
-import { SleepTracker } from "@/components/sleep/Tracker"
+import { getUserSettings } from "@/actions/nutrition"
+import DashboardSleep from "@/components/dashboard/views/DashboardSleep"
 
 export const metadata = {
   title: "Sleep Tracker | Success Hub",
@@ -7,12 +8,7 @@ export const metadata = {
 
 export default async function SleepPage() {
   const logs = await getSleepLogs(30) // Get last 30 days for history
+  const settings = await getUserSettings()
 
-  return (
-    <div className="flex flex-col h-full gap-6">
-      <div className="flex-1 min-h-0 overflow-y-auto pr-2">
-        <SleepTracker logs={logs} />
-      </div>
-    </div>
-  )
+  return <DashboardSleep initialLogs={logs} targetDuration={settings?.targetSleepDuration || 8} />
 }

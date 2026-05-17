@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
@@ -135,7 +134,7 @@ const intentionTemplate = {
 }
 
 export default function IntentionSetting() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [selected, setSelected] = useState<string[]>([])
   const [template, setTemplate] = useState(intentionTemplate)
   const [showPreview, setShowPreview] = useState(false)
@@ -163,7 +162,7 @@ export default function IntentionSetting() {
       >
         <div className="max-w-[1200px] mx-auto relative z-10">
           <motion.button
-            onClick={() => navigate('/')}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2 text-dark/70 hover:text-lavender transition-colors mb-8 group"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -416,7 +415,7 @@ export default function IntentionSetting() {
             Your transformation begins with a single, purposeful choice.
           </p>
           <button
-            onClick={() => navigate('/#pricing')}
+            onClick={() => router.push('/#pricing')}
             className="btn-primary text-lg px-10 py-4"
           >
             Start Setting Your Intentions
@@ -427,3 +426,4 @@ export default function IntentionSetting() {
     </div>
   )
 }
+

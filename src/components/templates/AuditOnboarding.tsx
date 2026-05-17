@@ -1,330 +1,207 @@
-// @ts-nocheck
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
-import { motion } from 'framer-motion'
-import {
-  ArrowLeft,
-  ClipboardList,
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  CheckCircle2, 
   Sparkles,
-  Target,
-  Search,
-  BarChart3,
-  MessageSquareHeart,
-  Flag,
-  CheckCircle2,
-  Circle,
-} from 'lucide-react'
+  Briefcase, 
+  DollarSign, 
+  HeartPulse, 
+  Dumbbell, 
+  Apple, 
+  Moon, 
+  Users, 
+  Baby, 
+  MessageCircleHeart, 
+  Flower2, 
+  TrendingUp, 
+  Lightbulb, 
+  Home, 
+  Clock, 
+  PartyPopper
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { submitAudit } from "@/actions/audit";
 
-const fadeUp = {
-  initial: { opacity: 0, y: 40 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.15 },
-  transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const },
-}
-
-const staggerFade = (delay: number) => ({
-  initial: { opacity: 0, y: 30 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.15 },
-  transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const, delay },
-})
-
-const features = [
-  {
-    icon: ClipboardList,
-    title: '15 Key Life Areas',
-    description: 'Comprehensive assessment covering career, health, relationships, creativity, and more.',
-    color: 'text-sage',
-    bg: 'bg-sage/10',
-  },
-  {
-    icon: Sparkles,
-    title: 'Instant AI Insights',
-    description: 'Get personalized analysis powered by Cherry Blossom AI in real-time.',
-    color: 'text-coral',
-    bg: 'bg-coral/10',
-  },
-  {
-    icon: Target,
-    title: 'Personalized Action Plan',
-    description: 'Receive a tailored roadmap with clear next steps for your transformation.',
-    color: 'text-gold',
-    bg: 'bg-gold/10',
-  },
-]
-
-const steps = [
-  {
-    number: '01',
-    icon: Search,
-    title: 'Answer 15 Questions',
-    description: 'Take a thoughtful 15-question assessment covering key life areas.',
-  },
-  {
-    number: '02',
-    icon: BarChart3,
-    title: 'Get Your Score',
-    description: 'Receive instant results with a comprehensive balance scorecard.',
-  },
-  {
-    number: '03',
-    icon: MessageSquareHeart,
-    title: 'Review AI Insights',
-    description: 'Get personalized AI-powered analysis from Cherry Blossom.',
-  },
-  {
-    number: '04',
-    icon: Flag,
-    title: 'Set Your Intentions',
-    description: 'Transform insights into actionable 28-day transformation goals.',
-  },
-]
-
-const sampleQuestions = [
-  {
-    id: 1,
-    question: 'How satisfied are you with your current work-life balance?',
-    options: [
-      'Very satisfied — I feel balanced and fulfilled',
-      'Somewhat satisfied — A few areas need improvement',
-      'Neutral — It could go either way',
-      'Dissatisfied — I often feel overwhelmed',
-    ],
-  },
-  {
-    id: 2,
-    question: 'How often do you make time for self-care and personal wellness?',
-    options: [
-      'Daily — Self-care is a non-negotiable priority',
-      'A few times per week — I try when I can',
-      'Rarely — I struggle to find time',
-      'Almost never — There is always something else to do',
-    ],
-  },
-  {
-    id: 3,
-    question: 'How connected do you feel to your sense of purpose and meaning?',
-    options: [
-      'Deeply connected — My life feels purposeful',
-      'Somewhat connected — I know my purpose but need more alignment',
-      'Uncertain — I am still figuring it out',
-      'Disconnected — I feel like something is missing',
-    ],
-  },
-]
+const LIFE_AREAS = [
+  { id: "Career", icon: Briefcase, label: "Career", color: "text-blue-500", bg: "bg-blue-50", question: "How satisfied are you with your professional growth and work environment?" },
+  { id: "Finances", icon: DollarSign, label: "Finances", color: "text-emerald-500", bg: "bg-emerald-50", question: "How secure and satisfied do you feel with your current financial situation?" },
+  { id: "Health", icon: HeartPulse, label: "Health", color: "text-rose-500", bg: "bg-rose-50", question: "How would you rate your overall physical health and vitality?" },
+  { id: "Fitness", icon: Dumbbell, label: "Fitness", color: "text-orange-500", bg: "bg-orange-50", question: "How consistent and effective is your current exercise routine?" },
+  { id: "Nutrition", icon: Apple, label: "Nutrition", color: "text-green-500", bg: "bg-green-50", question: "How well are you nourishing your body with quality food and hydration?" },
+  { id: "Sleep", icon: Moon, label: "Sleep", color: "text-indigo-500", bg: "bg-indigo-50", question: "How would you rate the quality and consistency of your rest?" },
+  { id: "Relationships", icon: Users, label: "Relationships", color: "text-coral", bg: "bg-coral/5", question: "How fulfilling are your romantic and close personal relationships?" },
+  { id: "Family", icon: Baby, label: "Family", color: "text-pink-500", bg: "bg-pink-50", question: "How satisfied are you with your connection to and time spent with family?" },
+  { id: "Social", icon: MessageCircleHeart, label: "Social", color: "text-purple-500", bg: "bg-purple-50", question: "How satisfied are you with your social life and community involvement?" },
+  { id: "Spirituality", icon: Flower2, label: "Spirituality", color: "text-teal-500", bg: "bg-teal-50", question: "How connected do you feel to your sense of purpose or spirituality?" },
+  { id: "Personal Growth", icon: TrendingUp, label: "Personal Growth", color: "text-sage", bg: "bg-sage/10", question: "How much time and energy are you investing in learning and self-improvement?" },
+  { id: "Creativity", icon: Lightbulb, label: "Creativity", color: "text-amber-500", bg: "bg-amber-50", question: "How often do you engage in creative expression or hobbies?" },
+  { id: "Home Environment", icon: Home, label: "Home Environment", color: "text-cyan-500", bg: "bg-cyan-50", question: "How much does your physical living space support your well-being?" },
+  { id: "Time Management", icon: Clock, label: "Time Management", color: "text-gray-500", bg: "bg-gray-50", question: "How effectively are you managing your time and setting boundaries?" },
+  { id: "Fun & Recreation", icon: PartyPopper, label: "Fun & Recreation", color: "text-gold", bg: "bg-gold/10", question: "How much joy and playfulness are you experiencing in your weekly life?" },
+];
 
 export default function AuditOnboarding() {
-  const navigate = useNavigate()
-  const [answers, setAnswers] = useState<Record<number, number>>({})
+  const router = useRouter();
+  const [step, setStep] = useState(0); // 0 = Welcome, 1-15 = Questions, 16 = Submitting/Results
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSelect = (questionId: number, optionIndex: number) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }))
-  }
+  const currentAreaIndex = step - 1;
+  const currentArea = LIFE_AREAS[currentAreaIndex];
 
-  const answeredCount = Object.keys(answers).length
+  const handleScoreSelect = (score: number) => {
+    if (!currentArea) return;
+    
+    setScores(prev => ({ ...prev, [currentArea.id]: score }));
+    
+    if (step < LIFE_AREAS.length) {
+      setStep(step + 1);
+    } else {
+      setStep(LIFE_AREAS.length + 1);
+      handleSubmit({ ...scores, [currentArea.id]: score });
+    }
+  };
+
+  const handleSubmit = async (finalScores: Record<string, number>) => {
+    setIsSubmitting(true);
+    try {
+      await submitAudit(finalScores);
+      router.push("/dashboard/audit");
+    } catch (error) {
+      console.error("Audit submission failed:", error);
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className="min-h-[100dvh] bg-cream">
-      {/* ─── Hero ─── */}
-      <section
-        className="relative pt-24 pb-20 px-6 overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #F0F4E8 0%, #8FB57320 100%)' }}
-      >
-        <div className="max-w-[1200px] mx-auto relative z-10">
-          <motion.button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-dark/70 hover:text-sage transition-colors mb-8 group"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-body-sm font-medium">Back to Home</span>
-          </motion.button>
-
-          <motion.div className="max-w-3xl" {...fadeUp}>
-            <span className="inline-block bg-sage text-white text-caption px-4 py-1.5 rounded-full mb-4">
-              Step 1 of 3
-            </span>
-            <h1 className="text-heading-1 text-sage mb-4">Audit Onboarding</h1>
-            <p className="text-serif-accent text-gray mb-4">
-              Discover Where You Stand — Your Personalized Work-Life Balance Assessment
-            </p>
-            <p className="text-body-lg text-dark/80 max-w-2xl">
-              A comprehensive 15-question assessment that evaluates 15 key life areas.
-              Get instant personalized results with AI-powered insights from Cherry Blossom.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ─── Features ─── */}
-      <section className="section-padding px-6">
-        <div className="max-w-[1200px] mx-auto">
-          <motion.div className="text-center mb-14" {...fadeUp}>
-            <h2 className="text-heading-2 text-dark mb-3">What You Will Receive</h2>
-            <p className="text-body text-gray max-w-xl mx-auto">
-              Your audit results provide a complete picture of your current life balance.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feat, i) => (
-              <motion.div
-                key={feat.title}
-                className="bg-white rounded-[24px] shadow-card border border-sage/10 p-8 text-center transition-all duration-400 hover:shadow-card-hover hover:-translate-y-2"
-                {...staggerFade(i * 0.12)}
-              >
-                <div className={`w-14 h-14 rounded-full ${feat.bg} flex items-center justify-center mx-auto mb-5`}>
-                  <feat.icon size={28} className={feat.color} />
-                </div>
-                <h3 className="text-heading-4 text-dark mb-3">{feat.title}</h3>
-                <p className="text-body-sm text-gray">{feat.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Process ─── */}
-      <section className="section-padding px-6" style={{ background: 'linear-gradient(180deg, #F9F6F0 0%, #F0F4E8 100%)' }}>
-        <div className="max-w-[1200px] mx-auto">
-          <motion.div className="text-center mb-14" {...fadeUp}>
-            <h2 className="text-heading-2 text-dark mb-3">Your Audit Journey</h2>
-            <p className="text-body text-gray max-w-xl mx-auto">
-              Four simple steps to uncover your personalized work-life balance insights.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step, i) => (
-              <motion.div
-                key={step.number}
-                className="bg-white rounded-[20px] shadow-card p-6 text-center relative transition-all duration-400 hover:-translate-y-2 hover:shadow-card-hover"
-                {...staggerFade(i * 0.1)}
-              >
-                <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-sage text-white text-sm font-bold flex items-center justify-center shadow-md">
-                  {step.number}
-                </div>
-                <div className="w-12 h-12 rounded-full bg-sage/10 flex items-center justify-center mx-auto mb-4">
-                  <step.icon size={24} className="text-sage" />
-                </div>
-                <h3 className="text-heading-4 text-dark mb-2">{step.title}</h3>
-                <p className="text-body-sm text-gray">{step.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Sample Audit Form ─── */}
-      <section className="section-padding px-6">
-        <div className="max-w-[800px] mx-auto">
-          <motion.div className="text-center mb-12" {...fadeUp}>
-            <h2 className="text-heading-2 text-dark mb-3">Preview The Audit</h2>
-            <p className="text-body text-gray">
-              Try these sample questions to get a feel for the assessment.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="bg-white rounded-[24px] shadow-card border border-sage/10 p-8 md:p-10"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-          >
-            {/* Progress */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-body-sm font-medium text-dark">
-                  Sample Progress
-                </span>
-                <span className="text-body-sm text-sage font-semibold">
-                  {answeredCount}/{sampleQuestions.length} answered
-                </span>
+    <div className="min-h-screen bg-cream flex items-center justify-center p-6">
+      <div className="max-w-2xl w-full">
+        <AnimatePresence mode="wait">
+          {step === 0 && (
+            <motion.div
+              key="welcome"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="text-center space-y-8"
+            >
+              <div className="w-20 h-20 bg-sage rounded-3xl flex items-center justify-center mx-auto shadow-xl rotate-3">
+                <Sparkles size={40} className="text-white" />
               </div>
-              <div className="w-full h-2.5 bg-sage/10 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full bg-sage"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(answeredCount / sampleQuestions.length) * 100}%` }}
-                  transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-                />
+              <div className="space-y-4">
+                <h1 className="text-4xl md:text-5xl font-bold text-dark">Life Balance Audit</h1>
+                <p className="text-xl text-gray max-w-lg mx-auto leading-relaxed">
+                  15 questions to unlock clarity across every dimension of your life. Ready to see your scorecard?
+                </p>
               </div>
-            </div>
+              <button
+                onClick={() => setStep(1)}
+                className="btn-primary text-xl px-12 py-5 rounded-2xl group shadow-2xl shadow-sage/20"
+              >
+                Begin Assessment
+                <ArrowRight className="inline ml-2 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
+          )}
 
-            {/* Questions */}
-            <div className="space-y-8">
-              {sampleQuestions.map((q, qi) => (
-                <motion.div
-                  key={q.id}
-                  className="border-b border-sage/10 last:border-0 pb-8 last:pb-0"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: qi * 0.1 }}
+          {step > 0 && step <= LIFE_AREAS.length && (
+            <motion.div
+              key={currentArea?.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={() => setStep(step - 1)}
+                  className="p-2 text-gray hover:text-dark transition-colors"
                 >
-                  <p className="text-body font-medium text-dark mb-4">
-                    {q.id}. {q.question}
-                  </p>
-                  <div className="space-y-2.5">
-                    {q.options.map((option, oi) => {
-                      const isSelected = answers[q.id] === oi
-                      return (
-                        <button
-                          key={oi}
-                          onClick={() => handleSelect(q.id, oi)}
-                          className={`w-full text-left px-5 py-3.5 rounded-xl border-2 transition-all duration-300 flex items-start gap-3 ${
-                            isSelected
-                              ? 'border-sage bg-sage/5 shadow-sm'
-                              : 'border-sage/10 hover:border-sage/30 hover:bg-sage/[0.02]'
-                          }`}
-                        >
-                          {isSelected ? (
-                            <CheckCircle2 size={20} className="text-sage mt-0.5 shrink-0" />
-                          ) : (
-                            <Circle size={20} className="text-sage/30 mt-0.5 shrink-0" />
-                          )}
-                          <span className={`text-body-sm ${isSelected ? 'text-dark font-medium' : 'text-gray'}`}>
-                            {option}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                  <ArrowLeft size={24} />
+                </button>
+                <div className="text-sm font-bold text-sage bg-sage/10 px-4 py-1.5 rounded-full">
+                  Question {step} of 15
+                </div>
+              </div>
 
-      {/* ─── CTA ─── */}
-      <section
-        className="py-20 px-6"
-        style={{ background: 'linear-gradient(180deg, #F0F4E8 0%, #8FB57330 100%)' }}
-      >
-        <motion.div
-          className="max-w-2xl mx-auto text-center"
-          {...fadeUp}
-        >
-          <h2 className="text-heading-2 text-dark mb-4">Ready To Discover Your Balance?</h2>
-          <p className="text-body-lg text-gray mb-8">
-            Take the full 15-question assessment and get your personalized results in minutes.
-          </p>
-          <button
-            onClick={() => navigate('/work-life-balance-audit')}
-            className="btn-primary text-lg px-10 py-4"
-          >
-            <ClipboardList size={22} className="inline mr-2 -mt-1" />
-            Start Your Audit
-          </button>
-          <p className="text-caption text-gray mt-4">
-            Takes about 5 minutes • Instant results
-          </p>
-        </motion.div>
-      </section>
+              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-glass border border-white/60 space-y-10 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gray-100">
+                  <motion.div 
+                    className="h-full bg-sage"
+                    initial={{ width: `${((step - 1) / 15) * 100}%` }}
+                    animate={{ width: `${(step / 15) * 100}%` }}
+                  />
+                </div>
+
+                <div className={`w-20 h-20 ${currentArea?.bg} ${currentArea?.color} rounded-2xl flex items-center justify-center mx-auto mb-2`}>
+                   {currentArea && <currentArea.icon size={40} />}
+                </div>
+
+                <div className="space-y-3">
+                  <h2 className="text-3xl font-bold text-dark">{currentArea?.label}</h2>
+                  <p className="text-lg text-gray leading-relaxed">
+                    {currentArea?.question}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-3">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
+                    <button
+                      key={score}
+                      onClick={() => handleScoreSelect(score)}
+                      className={`h-12 md:h-16 rounded-xl font-bold text-lg transition-all border-2 ${
+                        scores[currentArea?.id || ""] === score
+                          ? "bg-sage text-white border-sage scale-105"
+                          : "bg-cream/50 text-dark border-transparent hover:border-sage/30 hover:bg-white"
+                      }`}
+                    >
+                      {score}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex justify-between text-[10px] uppercase font-bold text-gray tracking-widest px-2">
+                   <span>Least Satisfied</span>
+                   <span>Most Satisfied</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {step > LIFE_AREAS.length && (
+            <motion.div
+              key="submitting"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center space-y-8"
+            >
+              <div className="w-24 h-24 bg-sage/10 text-sage rounded-full flex items-center justify-center mx-auto animate-pulse">
+                <CheckCircle2 size={48} />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-4xl font-bold text-dark">Calculating your results...</h2>
+                <p className="text-xl text-gray max-w-md mx-auto">
+                  Cherry Blossom AI is analyzing your inputs to generate personalized insights for your journey.
+                </p>
+              </div>
+              <div className="flex justify-center">
+                 <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-sage"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                 </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
-  )
+  );
 }

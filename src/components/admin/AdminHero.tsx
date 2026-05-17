@@ -1,15 +1,14 @@
-// @ts-nocheck
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Image } from 'lucide-react'
 
 export default function AdminHero() {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
       <div className="flex items-center gap-4 mb-8">
-        <button onClick={() => navigate('/admin')} className="flex items-center gap-2 text-gray hover:text-sage-dark">
+        <button onClick={() => router.push('/admin')} className="flex items-center gap-2 text-gray hover:text-sage-dark">
           <ArrowLeft size={18} />
         </button>
         <div className="flex items-center gap-3">
@@ -32,3 +31,4 @@ export default function AdminHero() {
     </motion.div>
   )
 }
+

@@ -4,17 +4,17 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Heart, Plus, History, Scale, Droplets, Smile, Trash2, Loader2, Calendar } from "lucide-react"
 import { format } from "date-fns"
-import { logWellnessMetric, getWellnessMetrics, deleteWellnessMetric } from "@/actions/wellness"
+import { logWellnessMetric, deleteWellnessMetric } from "@/actions/wellness"
 import { useRouter } from "next/navigation"
 
-interface Metric {
+export interface Metric {
   id: string
   type: string
   value: number
   date: Date
 }
 
-export function WellnessHub({ initialMetrics }: { initialMetrics: any[] }) {
+export function WellnessHub({ initialMetrics }: { initialMetrics: Metric[] }) {
   const [metrics, setMetrics] = useState(initialMetrics)
   const [type, setType] = useState("WEIGHT")
   const [value, setValue] = useState("")

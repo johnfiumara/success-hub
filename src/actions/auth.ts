@@ -8,7 +8,7 @@ import prisma from "@/lib/prisma"
 
 const isProduction = process.env.NODE_ENV === "production"
 
-export async function login(prevState: any, formData: FormData) {
+export async function login(_prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
@@ -47,7 +47,7 @@ export async function login(prevState: any, formData: FormData) {
   redirect("/tasks")
 }
 
-export async function signup(prevState: any, formData: FormData) {
+export async function signup(_prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const name = formData.get("name") as string

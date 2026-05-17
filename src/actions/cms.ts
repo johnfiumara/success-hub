@@ -9,6 +9,8 @@ async function requireOwner() {
   const context = await getCurrentUser()
   if (!context) throw new Error("Unauthorized")
 
+  if (!context.workspaceId) throw new Error("Unauthorized: No workspace selected")
+
   const membership = await prisma.workspaceMember.findUnique({
     where: { workspaceId_userId: { workspaceId: context.workspaceId, userId: context.user.id } }
   })

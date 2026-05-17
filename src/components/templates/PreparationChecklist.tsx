@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { useState, useMemo } from 'react'
-import { useNavigate } from 'react-router'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
@@ -101,7 +100,7 @@ const categoryMeta: Record<string, { icon: React.ComponentType<{ size?: number; 
 }
 
 export default function PreparationChecklist() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [checked, setChecked] = useState<Set<string>>(new Set())
 
   const toggleItem = (id: string) => {
@@ -139,7 +138,7 @@ export default function PreparationChecklist() {
       >
         <div className="max-w-[1200px] mx-auto relative z-10">
           <motion.button
-            onClick={() => navigate('/')}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2 text-dark/70 hover:text-coral transition-colors mb-8 group"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -355,7 +354,7 @@ export default function PreparationChecklist() {
             )}
 
             <button
-              onClick={() => navigate('/intention-setting')}
+              onClick={() => router.push('/intention-setting')}
               className="btn-primary text-lg px-10 py-4"
             >
               <Sparkles size={22} className="inline mr-2 -mt-0.5" />
@@ -373,3 +372,4 @@ export default function PreparationChecklist() {
     </div>
   )
 }
+
