@@ -32,6 +32,7 @@ model User {
   communityComments CommunityComment[] @relation("CommunityCommentAuthor")
   hostedMeetings   Meeting[]          @relation("MeetingHost")
   emailIntegration EmailIntegration?
+  leads            Lead[]
 }
 
 model UserSettings {
@@ -133,7 +134,7 @@ model PricingPlan {
 }
 
 model SiteSetting {
-  id        String   @id @default("singleton")
+  id        String   @id @default(cuid())
   key       String   @unique
   value     String
   updatedAt DateTime @updatedAt
@@ -287,3 +288,46 @@ model EmailIntegration {
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model Page {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?
+  isPublished Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  sections    Section[]
+}
+
+model Section {
+  id        String   @id @default(cuid())
+  pageId    String
+  type      String   // "hero" | "stats" | "testimonials" | "team" | "pricing" | "blog" | "cta" | "content"
+  order     Int      @default(0)
+  content   Json     // Dynamic JSON content fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
+
+// ─── Marketing leads ─────────────────────────────────────────────────────────
+
+model Lead {
+  id          String    @id @default(cuid())
+  email       String
+  name        String?
+  source      String
+  intent      String?
+  payload     Json?
+  token       String    @unique @default(cuid())
+  consumedAt  DateTime?
+  userId      String?
+  createdAt   DateTime  @default(now())
+
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([email])
+  @@index([createdAt])
+}
+
