@@ -51,6 +51,7 @@ export async function signup(_prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const name = formData.get("name") as string
+  const leadToken = (formData.get("lead") as string | null) || null
 
   if (!email || !password || !name) {
     return { error: "All fields are required" }
@@ -83,6 +84,18 @@ export async function signup(_prevState: unknown, formData: FormData) {
     include: { workspaces: true },
   })
 
+  let consumedLeadIntent: string | null = null
+  if (leadToken) {
+    const lead = await prisma.lead.findUnique({ where: { token: leadToken } })
+    if (lead && !lead.consumedAt) {
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: { consumedAt: new Date(), userId: user.id },
+      })
+      consumedLeadIntent = lead.intent ?? null
+    }
+  }
+
   const defaultWorkspaceId = user.workspaces[0].workspaceId
 
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
@@ -96,7 +109,7 @@ export async function signup(_prevState: unknown, formData: FormData) {
     sameSite: "lax",
   })
 
-  redirect("/tasks")
+  redirect(consumedLeadIntent ? "/onboarding" : "/tasks")
 }
 
 export async function logout() {
