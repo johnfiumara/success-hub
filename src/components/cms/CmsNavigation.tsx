@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { FileText, Users, Star, DollarSign, Settings, LayoutDashboard, Wand2 } from "lucide-react"
+import { FileText, Users, Star, DollarSign, Settings, LayoutDashboard, Wand2, Mail } from "lucide-react"
 
 const navItems = [
   { href: "/cms", label: "Overview", icon: LayoutDashboard, exact: true },
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/cms/testimonials", label: "Testimonials", icon: Star },
   { href: "/cms/team", label: "Team", icon: Users },
   { href: "/cms/pricing", label: "Pricing", icon: DollarSign },
+  { href: "/cms/leads", label: "Leads", icon: Mail },
   { href: "/cms/settings", label: "Site Settings", icon: Settings },
 ]
 

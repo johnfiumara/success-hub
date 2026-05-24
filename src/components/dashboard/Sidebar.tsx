@@ -51,6 +51,7 @@ export async function Sidebar() {
             <div className="px-3 pt-3 pb-1">
               <p className="text-xs uppercase text-gray/50 font-semibold tracking-wider">Admin</p>
             </div>
+            <NavItem href="/admin" icon={<Settings size={18} />}>Admin Panel</NavItem>
             <NavItem href="/cms" icon={<LayoutDashboard size={18} />}>CMS</NavItem>
           </>
         )}

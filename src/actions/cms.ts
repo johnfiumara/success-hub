@@ -167,3 +167,21 @@ export async function bulkUpsertSiteSettings(settings: Record<string, string>) {
   revalidatePath("/cms/settings")
   revalidatePath("/")
 }
+
+// ─── Leads ────────────────────────────────────────────────────────────────────
+export async function getLeads() {
+  await requireOwner()
+  return prisma.lead.findMany({ orderBy: { createdAt: "desc" } })
+}
+
+export async function deleteLead(id: string) {
+  await requireOwner()
+  await prisma.lead.delete({ where: { id } })
+  revalidatePath("/cms/leads")
+}
+
+export async function convertLead(id: string) {
+  await requireOwner()
+  await prisma.lead.update({ where: { id }, data: { consumedAt: new Date() } })
+  revalidatePath("/cms/leads")
+}

@@ -2,8 +2,9 @@ import { getPosts } from "@/actions/cms"
 import { getTestimonials } from "@/actions/cms"
 import { getTeamMembers } from "@/actions/cms"
 import { getPricingPlans } from "@/actions/cms"
+import { getLeads } from "@/actions/cms"
 import Link from "next/link"
-import { FileText, Star, Users, DollarSign, Settings, ArrowRight } from "lucide-react"
+import { FileText, Star, Users, DollarSign, Settings, ArrowRight, Mail } from "lucide-react"
 
 export const metadata = { title: "CMS | Success Hub" }
 
@@ -12,12 +13,13 @@ const sections = [
   { href: "/cms/testimonials", label: "Testimonials", icon: Star, color: "bg-amber-50 text-amber-600", description: "Customer and member reviews" },
   { href: "/cms/team", label: "Team", icon: Users, color: "bg-blue-50 text-blue-600", description: "Team member profiles" },
   { href: "/cms/pricing", label: "Pricing Plans", icon: DollarSign, color: "bg-green-50 text-green-600", description: "Subscription tiers and features" },
+  { href: "/cms/leads", label: "Leads", icon: Mail, color: "bg-indigo-50 text-indigo-600", description: "Manage marketing leads" },
   { href: "/cms/settings", label: "Site Settings", icon: Settings, color: "bg-gray-50 text-gray-600", description: "Global site configuration" },
 ]
 
 export default async function CmsOverviewPage() {
-  const [posts, testimonials, team, pricing] = await Promise.all([
-    getPosts(), getTestimonials(), getTeamMembers(), getPricingPlans()
+  const [posts, testimonials, team, pricing, leads] = await Promise.all([
+    getPosts(), getTestimonials(), getTeamMembers(), getPricingPlans(), getLeads()
   ])
 
   const counts: Record<string, number> = {
@@ -25,6 +27,7 @@ export default async function CmsOverviewPage() {
     "/cms/testimonials": testimonials.length,
     "/cms/team": team.length,
     "/cms/pricing": pricing.length,
+    "/cms/leads": leads.length,
     "/cms/settings": 0,
   }
 
